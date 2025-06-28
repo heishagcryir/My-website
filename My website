@@ -1,0 +1,276 @@
+import React, { useState } from 'react';
+
+export default function App() {
+  const [step, setStep] = useState('rooms'); // rooms | form | payment | confirmation
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [bookingData, setBookingData] = useState({});
+
+  const rooms = [
+    {
+      id: 1,
+      type: 'Basic Room',
+      price: 30,
+      description: 'Comfortable and clean room with all essential amenities for a relaxing stay.',
+      image: 'https://placehold.co/600x400/2D5797/FFFFFF?text=Basic+Room',
+    },
+    {
+      id: 2,
+      type: 'Executive Room',
+      price: 40,
+      description: 'Spacious room with upgraded facilities, perfect for business travelers or extended stays.',
+      image: ' https://placehold.co/600x400/4A90E2/FFFFFF?text=Executive+Room',
+    },
+    {
+      id: 3,
+      type: 'Presidential Suite',
+      price: 100,
+      description: 'Luxurious suite offering premium comfort, ideal for VIP guests and special occasions.',
+      image: ' https://placehold.co/600x400/FFB800/FFFFFF?text=Presidential+Suite',
+    },
+  ];
+
+  const currentRoom = rooms.find((r) => r.id === selectedRoom);
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+    setBookingData(data);
+    setStep('payment');
+  };
+
+  const handlePaymentSubmit = (e) => {
+    e.preventDefault();
+    setStep('confirmation');
+  };
+
+  return (
+    <div className="bg-green-50 text-gray-800 min-h-screen">
+      {/* Header */}
+      <header className="bg-green-800 text-white p-6 shadow-lg">
+        <div className="container mx-auto flex justify-between items-center">
+          <h1 className="text-3xl font-bold">VILLA AYAANLE</h1>
+          <p className="text-sm">Airport Road, Bosaso, Somalia</p>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-green-700 to-emerald-900 text-white py-16 px-6 text-center">
+        <h2 className="text-4xl md:text-5xl font-extrabold mb-4">Experience Luxury & Comfort</h2>
+        <p className="text-lg md:text-xl max-w-2xl mx-auto mb-6">
+          Welcome to VILLA AYAANLE – your home away from home in the heart of Bosaso.
+        </p>
+        <a
+          href="#rooms"
+          className="inline-block bg-green-500 hover:bg-green-400 text-black font-semibold px-6 py-3 rounded-full transition duration-300 shadow-md"
+        >
+          View Rooms
+        </a>
+      </section>
+
+      {/* Steps */}
+      <div className="container mx-auto px-6 py-6">
+        {step === 'rooms' && (
+          <>
+            <h2 id="rooms" className="text-3xl font-bold text-center mb-12">Our Rooms</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              {rooms.map((room) => (
+                <div
+                  key={room.id}
+                  className={`border rounded-lg overflow-hidden shadow-lg transform transition duration-300 hover:scale-105 ${
+                    selectedRoom === room.id ? 'ring-2 ring-green-500' : ''
+                  }`}
+                >
+                  <img src={room.image} alt={room.type} className="w-full h-48 object-cover" />
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold mb-2">{room.type}</h3>
+                    <p className="text-gray-600 mb-4">{room.description}</p>
+                    <p className="text-lg font-semibold text-green-800 mb-4">${room.price}/night</p>
+                    <button
+                      onClick={() =>
+                        setSelectedRoom(selectedRoom === room.id ? null : room.id)
+                      }
+                      className={`w-full py-2 rounded-full font-medium transition ${
+                        selectedRoom === room.id
+                          ? 'bg-red-500 hover:bg-red-600 text-white'
+                          : 'bg-green-700 hover:bg-green-800 text-white'
+                      }`}
+                    >
+                      {selectedRoom === room.id ? 'Cancel Selection' : 'Select Room'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {selectedRoom && (
+              <div className="mt-10 text-center">
+                <button
+                  onClick={() => setStep('form')}
+                  className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full transition"
+                >
+                  Proceed to Book
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Booking Form */}
+        {step === 'form' && (
+          <div className="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-12">
+            <h3 className="text-2xl font-bold mb-6 text-center">Book Your {currentRoom?.type}</h3>
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Full Name</label>
+                <input
+                  name="name"
+                  required
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="Your name"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Email Address</label>
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="you@example.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Phone Number</label>
+                <input
+                  name="phone"
+                  type="tel"
+                  required
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="+252..."
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Check-in Date</label>
+                  <input
+                    name="checkIn"
+                    type="date"
+                    required
+                    className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Check-out Date</label>
+                  <input
+                    name="checkOut"
+                    type="date"
+                    required
+                    className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-full transition"
+              >
+                Next → Payment
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Payment Page */}
+        {step === 'payment' && (
+          <div className="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-12">
+            <h3 className="text-2xl font-bold mb-6 text-center">Payment for {currentRoom?.type}</h3>
+            <form onSubmit={handlePaymentSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Cardholder Name</label>
+                <input
+                  type="text"
+                  required
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="John Doe"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Card Number</label>
+                <input
+                  type="text"
+                  required
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="1234 5678 9012 3456"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Expiry Date</label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="MM/YY"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">CVV</label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="123"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-full transition"
+              >
+                Pay Now
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Confirmation Page */}
+        {step === 'confirmation' && (
+          <div className="max-w-xl mx-auto bg-white p-12 rounded-lg shadow-lg mt-12 text-center">
+            <h3 className="text-3xl font-bold mb-4 text-green-600">Payment Successful!</h3>
+            <p className="mb-4">Thank you for booking with VILLA AYAANLE.</p>
+            <p className="mb-6">Your reservation for the {currentRoom?.type} has been confirmed.</p>
+            <button
+              onClick={() => {
+                setStep('rooms');
+                setSelectedRoom(null);
+              }}
+              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full transition"
+            >
+              Back to Home
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Contact Section */}
+      <section className="py-16 px-6 bg-green-800 text-white">
+        <div className="container mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-6">Contact Us</h2>
+          <p className="mb-4 text-lg">
+            Email: Villayaanlehotel@gmail.com
+          </p>
+          <p className="mb-6 text-lg">
+            Phone: +252907760770
+          </p>
+          <p className="text-sm opacity-80">
+            Airport Road, Bosaso, Somalia | Open 24/7
+          </p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-400 py-6 px-6 text-center text-sm">
+        &copy; {new Date().getFullYear()} VILLA AYAANLE. All rights reserved.
+      </footer>
+    </div>
+  );
+}
